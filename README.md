@@ -15,7 +15,7 @@ The file `twisted.sage` implements the computation of twisted Hodge numbers for 
 
 Make sure that Sage knows about `twisted.sage`, probably by doing `load("twisted.sage")`. There is ample documentation in the file, which can be acessed via
 
-```sage
+```
 twisted_hodge_number?
 TwistedHodgeDiamond?
 ```
@@ -33,22 +33,22 @@ sage: TwistedHodgeDiamond((3, 4))
 
 This luckily agrees with the output for
 
-```
+```sage
 sage: TwistedHodgeDiamond((4, [3, 2]))
 sage: TwistedHodgeDiamond((5, [2, 2, 2]))
 ```
 
-If you rather care about *twisted* Hodge diamonds (otherwise you could also use the [Hodge diamond cutter](https://github.com/pbelmans/hodge-diamond-cutter), one can compute it for say projective 3-space, twisted by `O(4)` (so that we are in fact computing the Hochschild-Kostant-Rosenberg decomposition of Hochschild cohomology) as follows
+If you rather care about *twisted* Hodge diamonds (otherwise you could also use the [Hodge diamond cutter](https://github.com/pbelmans/hodge-diamond-cutter)), you can add a twist parameter. For example, to compute the twisted Hodge diamond for projective 3-space, twisted by `O(4)` (so that we are in fact computing the Hochschild-Kostant-Rosenberg decomposition of Hochschild cohomology) as follows
 
 ```sage
 sage: TwistedHodgeDiamond((3, []), 4)
-              35
-          0        45
-      0       0         15
-  0       0        0         1
-      0       0         0
-          0        0
-              0
+                0
+           0         0
+      0         0        0
+  1        0         0       0
+      15        0        0
+           45        0
+                35
 ```
 
 For more information, see the docstrings.
