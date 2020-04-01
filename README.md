@@ -23,7 +23,7 @@ TwistedHodgeDiamond?
 To get the (untwisted) Hodge diamond of a quartic surface, use
 
 ```sage
-sage: TwistedHodgeDiamond((3, 4))
+sage: print(TwistedHodgeDiamond((3, 4)))
           1
       0        0
   1       20       1
@@ -34,14 +34,14 @@ sage: TwistedHodgeDiamond((3, 4))
 This luckily agrees with the output for
 
 ```sage
-sage: TwistedHodgeDiamond((4, [3, 2]))
-sage: TwistedHodgeDiamond((5, [2, 2, 2]))
+sage: print(TwistedHodgeDiamond((4, [3, 2])))
+sage: print(TwistedHodgeDiamond((5, [2, 2, 2])))
 ```
 
 If you rather care about *twisted* Hodge diamonds (otherwise you could also use the [Hodge diamond cutter](https://github.com/pbelmans/hodge-diamond-cutter)), you can add a twist parameter. For example, to compute the twisted Hodge diamond for projective 3-space, twisted by `O(4)` (so that we are in fact computing the Hochschild-Kostant-Rosenberg decomposition of Hochschild cohomology) as follows
 
 ```sage
-sage: TwistedHodgeDiamond((3, []), 4)
+sage: print(TwistedHodgeDiamond((3, []), 4))
                 0
            0         0
       0         0        0
