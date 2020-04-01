@@ -420,7 +420,7 @@ class TwistedHodgeDiamond:
 
     The (untwisted) Hodge diamond of a (quartic) K3 surface::
 
-        sage: print TwistedHodgeDiamond((3, 4))
+        sage: print(TwistedHodgeDiamond((3, 4)))
                   1
               0        0
           1       20       1
@@ -430,7 +430,7 @@ class TwistedHodgeDiamond:
 
     The twisted Hodge diamond of the projective plane, twisted by `O(3)`::
 
-        sage: print TwistedHodgeDiamond((2, []), 3)
+        sage: print(TwistedHodgeDiamond((2, []), 3))
                   0
               0        0
           1       0        0
@@ -524,7 +524,7 @@ class PolyvectorParallelogram(TwistedHodgeDiamond):
 
     The polyvector parallelogram of a cubic surface starts is::
 
-        sage: print PolyvectorParallelogram((3, 3))
+        sage: print(PolyvectorParallelogram((3, 3)))
           1
           0   0
           0   4   4
