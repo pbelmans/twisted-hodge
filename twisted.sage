@@ -486,13 +486,14 @@ class TwistedHodgeDiamond:
     def __str__(self):
         return str(self.pprint())
 
-    def __getitem__(self, (p, q)):
+    def __getitem__(self, key):
         r"""Return $\mathrm{h}_j^{p,q}(X)$.
 
         INPUT:
 
-        - ``(p, q)``: the indices of the (twisted) Hodge diamond
+        - ``key``: tuple of indices for the (twisted) Hodge diamond
         """
+        (p, q) = key
         return self.__M[p, q]
 
     @property
@@ -572,14 +573,15 @@ class PolyvectorParallelogram(TwistedHodgeDiamond):
     def __str__(self):
         return str(self.pprint())
 
-    def __getitem__(self, (p, q)):
+    def __getitem__(self, key):
         """Return $\\mathrm{h}^q(X,\\bigwedge^p\\mathrm{T}_X)$.
 
         This modifies the getter from the underlying twisted Hodge diamond.
 
         INPUT:
 
-        - ``(p, q)``: the indices of the (twisted) Hodge diamond
+        - ``key``: tuple of indices for the (twisted) Hodge diamond
         """
+        (p, q) = key
         d = self.variety.dimension
         return TwistedHodgeDiamond.__getitem__(self, (d - p, q))
