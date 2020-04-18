@@ -58,5 +58,5 @@ Also check out the documentation for the auxiliary class `CompleteIntersection`,
 ## Authors
 
 * [**Pieter Belmans**](https://pbelmans.ncag.info)
-* **Piet Glas**
+* [**Piet Glas**](https://pietglas.ncag.info)
 
