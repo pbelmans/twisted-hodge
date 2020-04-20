@@ -424,7 +424,7 @@ class TwistedHodgeDiamond:
         self.__X = X
         self.__j = j
 
-        self.__M = numpy.zeros((X.dimension + 1, X.dimension + 1), dtype=np.int)
+        self.__M = numpy.zeros((X.dimension + 1, X.dimension + 1), dtype=numpy.int)
 
         for (p, q) in product(list(range(X.dimension + 1)), repeat=2):
             self.__M[p, q] = twisted_hodge_number(X, j, p, q)
