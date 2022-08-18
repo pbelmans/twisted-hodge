@@ -26,12 +26,13 @@ EXAMPLES::
 
 To compute the usual Hodge number `\mathrm{h}^{1,1}` of a quartic surface::
 
+    sage: load("twisted.sage")
     sage: twisted_hodge_number((3, 4), 0, 1, 1)
     20
 
 To compute the whole (untwisted) Hodge diamond of a quartic surface::
 
-    sage: TwistedHodgeDiamond((3, 4))
+    sage: print(TwistedHodgeDiamond((3, 4)))
               1
           0        0
       1       20       1
@@ -41,8 +42,11 @@ To compute the whole (untwisted) Hodge diamond of a quartic surface::
 AUTHORS:
 
 - Pieter Belmans and Piet Glas (2019-11-01): initial version
+- Pieter Belmans (2022-08-18): bugfix
 
 """
+
+from sage.functions.other import binomial
 
 
 def twisted_hodge_number(X, j, p, q):
@@ -66,6 +70,7 @@ def twisted_hodge_number(X, j, p, q):
     We can compute the middle Hodge number of a complete intersection K3
     surface in the three cases as follows::
 
+        sage: load("twisted.sage")
         sage: K3 = CompleteIntersection(3, 4)
         sage: twisted_hodge_number(K3, 0, 1, 1)
         20
@@ -88,7 +93,6 @@ def twisted_hodge_number(X, j, p, q):
 
         sage: twisted_hodge_number((3, 2), 2, 1, 0)
         6
-
 
     """
     def binom(n, k):
@@ -140,12 +144,12 @@ def twisted_hodge_number(X, j, p, q):
         return 0
 
     # reduce projective space to linear section, for uniform treatment
-    if X.is_projective_space:
+    if X.is_projective_space():
         Y = CompleteIntersection(X.dimension + 1, [1])
         return twisted_hodge_number(Y, j, p, q)
 
     # we are working in the setting of [1]
-    if X.is_hypersurface:
+    if X.is_hypersurface():
         # we switch to the notation of [1]
         d = X.dimension
         m = X.degree
@@ -276,24 +280,37 @@ class CompleteIntersection:
 
     EXAMPLES::
 
-    We can construct a complete intersection with no hypersurfaces::
+    We can construct a complete intersection with no hypersurfaces (so projective space)::
 
-        sage: CompleteIntersection(3, [])
+        sage: load("twisted.sage")
+        sage: X = CompleteIntersection(3, [])
+        sage: X.is_projective_space()
+        True
 
     We can construct a hypersurface::
 
-        sage: CompleteIntersection(3, 4)
-        sage: CompleteIntersection(3, [4])
+        sage: X = CompleteIntersection(3, 4)
+        sage: X.dimension
+        2
+        sage: X.is_projective_space()
+        False
+        sage: Y = CompleteIntersection(3, [4])
+        sage: X == Y
+        True
 
     We can construct a complete intersection::
 
-        sage: CompleteIntersection(4, [3, 2])
+        sage: X = CompleteIntersection(4, [3, 2])
+        sage: X.dimension
+        2
 
     We can construct intersections and unsections::
 
-        sage: X = CompleteIntersection(4, [3, 2])
-        sage: X.unsect()
-        sage: X.intersect(3)
+        sage: X = CompleteIntersection(4, [5, 3])
+        sage: Y = X.unsect()
+        sage: X == Y.intersect(3)
+        True
+
     """
     def __init__(self, N, d):
         r"""
@@ -317,9 +334,9 @@ class CompleteIntersection:
 
     def __str__(self):
         """Pretty print the complete intersection."""
-        if self.is_projective_space:
+        if self.is_projective_space():
             return ("{}-dimensional projective space".format(self.dimension))
-        elif self.is_hypersurface:
+        elif self.is_hypersurface():
             return ("Hypersurface of degree {} in {}-dimensional projective "
                     "space".format(self.degree, self.ambient_dimension))
         else:
@@ -327,10 +344,29 @@ class CompleteIntersection:
                     "in {}-dimensional projective space".format(
                         self.dimension, self.degrees, self.ambient_dimension))
 
+    def __eq__(self, other):
+        """
+        Compare complete intersections, they are equal if their dimensions and degree sequences agree.
+        This takes into account linear sections.
+
+        EXAMPLES::
+
+            sage: load("twisted.sage")
+            sage: CompleteIntersection(3, 4) == CompleteIntersection(3, [4])
+            True
+            sage: CompleteIntersection(3, 4) == CompleteIntersection(4, [4, 1])
+            True
+            sage: CompleteIntersection(3, 4) == CompleteIntersection(3, 5)
+            False
+
+        """
+        return self.__N - self.__d.count(1) == other.__N - other.__d.count(1) \
+                and sorted(filter(lambda di: di > 1, self.__d)) == sorted(filter(lambda di: di > 1, other.__d))
+
     @property
     def degree(self):
         """Return the degree of the hypersurface, if it is one."""
-        assert self.is_hypersurface
+        assert self.is_hypersurface()
 
         return self.__d[0]
 
@@ -354,15 +390,52 @@ class CompleteIntersection:
         """Return the dimension of the complete intersection."""
         return self.ambient_dimension - self.codimension
 
-    @property
-    def is_hypersurface(self):
-        """Check whether the complete intersection is a hypersurface."""
-        return len(self.__d) == 1
+    def is_hypersurface(self, linear=False):
+        """Check whether the complete intersection is a hypersurface.
 
-    @property
-    def is_projective_space(self):
-        """Check whether there are no hypersurfaces whatsoever."""
-        return len(self.__d) == 0
+        When `linear` is True this takes hyperplane sections into account.
+
+        EXAMPLES::
+
+            sage: load("twisted.sage")
+            sage: CompleteIntersection(5, [2, 2]).is_hypersurface()
+            False
+            sage: CompleteIntersection(5, [2, 1]).is_hypersurface()
+            False
+            sage: CompleteIntersection(5, [2, 1]).is_hypersurface(linear=True)
+            True
+
+        """
+        if linear:
+            return len(list(filter(lambda di: di > 1, self.__d))) == 1
+        else:
+            return len(self.__d) == 1
+
+    def is_projective_space(self, linear=False):
+        """Check whether there are no hypersurfaces whatsoever.
+
+        When `linear` is True this takes hyperplane sections into account.
+
+        EXAMPLES::
+
+            sage: load("twisted.sage")
+            sage: CompleteIntersection(5, []).is_projective_space()
+            True
+            sage: CompleteIntersection(5, [1]).is_projective_space()
+            False
+            sage: CompleteIntersection(5, [1]).is_projective_space(linear=True)
+            True
+            sage: CompleteIntersection(5, [1, 1]).is_projective_space(linear=True)
+            True
+            sage: CompleteIntersection(5, [2, 1]).is_projective_space(linear=True)
+            False
+
+        """
+        if linear:
+            return len(list(filter(lambda di: di > 1, self.__d))) == 0
+        else:
+            return len(self.__d) == 0
+
 
     @property
     def canonical_degree(self):
@@ -376,6 +449,7 @@ class CompleteIntersection:
 
         Intersection of quadric and cubic becomes quadric::
 
+            sage: load("twisted.sage")
             sage: X = CompleteIntersection(4, [2, 3])
             sage: Y = X.unsect()
             sage: Y.degree
@@ -383,12 +457,12 @@ class CompleteIntersection:
 
         By doing another unsection we get projective space itself::
 
-            sage: Z = X.unsect()
+            sage: Z = Y.unsect()
             sage: Z.dimension
             4
 
         """
-        assert not self.is_projective_space, "Cannot unsect projective space"
+        assert not self.is_projective_space(), "Cannot unsect projective space"
 
         return CompleteIntersection(self.ambient_dimension, self.degrees[:-1])
 
@@ -403,6 +477,7 @@ class CompleteIntersection:
 
         Cut down a quadric surface by a cubic to get curve
 
+            sage: load("twisted.sage")
             sage: X = CompleteIntersection(3, 2)
             sage: Y = X.intersect(3)
             sage: Y.degrees
@@ -424,6 +499,7 @@ class TwistedHodgeDiamond:
 
     The (untwisted) Hodge diamond of a (quartic) K3 surface::
 
+        sage: load("twisted.sage")
         sage: print(TwistedHodgeDiamond((3, 4)))
                   1
               0        0
@@ -440,7 +516,6 @@ class TwistedHodgeDiamond:
           1       0        0
               8        0
                   10
-        ...
 
     """
     __M = []
@@ -534,6 +609,7 @@ class PolyvectorParallelogram(TwistedHodgeDiamond):
 
     The polyvector parallelogram of a cubic surface starts is::
 
+        sage: load("twisted.sage")
         sage: print(PolyvectorParallelogram((3, 3)))
           1
           0   0
@@ -597,5 +673,23 @@ class PolyvectorParallelogram(TwistedHodgeDiamond):
         return TwistedHodgeDiamond.__getitem__(self, (d - p, q))
 
     def euler(self):
-        # because we index the twisted Hodge diamond in a funny way for the parallelogram we have to add a sign
-        return (-1)**(self.variety.dimension) * TwistedHodgeDiamond.euler(self)
+        """Euler characteristic of the polyvector parallelogram
+
+        This is (at least in characteristic 0) the Euler characteristic of Hochschild cohomology,
+        by the Hochschild--Kostant--Rosenberg decomposition.
+
+        EXAMPLES::
+
+        The following checks the equality of Euler characteristics of Hochschild cohomology
+        and homology up to a sign determined by the dimension.
+
+            sage: load("twisted.sage")
+            sage: X = CompleteIntersection(9, [3, 3])
+            sage: TwistedHodgeDiamond(X).euler() == -1 * PolyvectorParallelogram(X).euler()
+            True
+            sage: X = CompleteIntersection(10, [3, 3])
+            sage: TwistedHodgeDiamond(X).euler() == PolyvectorParallelogram(X).euler()
+            True
+
+        """
+        return TwistedHodgeDiamond.euler(self)
