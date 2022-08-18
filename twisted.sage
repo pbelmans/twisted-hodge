@@ -122,6 +122,7 @@ def twisted_hodge_number(X, j, p, q):
         """Implement the helper function from Lemma 1 from [2]."""
         # deal with the non-desirable way that Sage deals with combinations
         # and repetitions by ensuring uniqueness using ``enumerate``
+        # there is probably a nicer way of doing this
         combinations = [[pair[1] for pair in m_i_mu]
                         for m_i_mu in Combinations(enumerate(m_i))]
 
@@ -209,17 +210,18 @@ def twisted_hodge_number(X, j, p, q):
 
         # apply recursion from [Satz 5(5.1), 3]
         if q in range(1, d - r):
-            return twisted_hodge_number(X, p, r, q) \
-                   + twisted_hodge_number(Y, p - m, r - 1, q + 1)
+            # last two terms are omitted because we are in characteristic 0
+            return twisted_hodge_number(X, p, r, q)
+        # global sections
         elif q == 0:
+            # apply first case of equation (10) from [2]
             if r == 0:
-                # apply first case of equation (10) from [2]
                 return alpha(n, mi, p)
+            # apply first case of equation (11) from [2]
             elif r == d:
-                # apply first case of equation (11) from [2]
                 return alpha(n, mi, K + p)
+            # apply recursion from [Satz 5(5.2), 3]
             elif r in range(1, d):
-                # apply recursion from [Satz 5(5.2), 3]
                 # last term is omitted because we are in characteristic 0
                 return twisted_hodge_number(X, p, r, 0) \
                        - twisted_hodge_number(X, p - m, r, 0) \
@@ -227,26 +229,28 @@ def twisted_hodge_number(X, j, p, q):
                        + twisted_hodge_number(X, p - m, r, 1)
             else:
                 return 0
+        # top degree cohomology
         elif q == d:
+            # apply third case of equation (10) from [2]
             if r == 0:
-                # apply third case of equation (10) from [2]
                 return alpha(n, mi, K - p)
+            # apply third case of equation (11) from [2]
             elif r == d:
-                # apply third case of equation (11) from [2]
                 return alpha(n, mi, -p)
+            # apply Serre duality
             elif r in range(1, d):
-                # apply Serre duality
                 return twisted_hodge_number(Y, -p, d - r, 0)
             else:
                 return 0
+        # apply recursion from [Satz 5(5.3), 3]
         elif q == 1 and r == d - 1:
-            # apply recursion from [Satz 5(5.3), 3]
             return sum([(-1)**i * twisted_hodge_number(X, p, d, i) for i in range(3)]) \
                    - sum([(-1)**i * twisted_hodge_number(X, p + m, d, i) for i in range(2)]) \
                    + twisted_hodge_number(Y, p, d - 1, 0) \
                    + twisted_hodge_number(Y, p + m, d, 0)
+        # apply recursion from [Satz 5(5.4), 3]
         elif r in range(1, d) and q == d - r:
-            # apply recursion from [Satz 5(5.4), 3]
+            # last two terms are added because we are in characteristic 0
             return twisted_hodge_number(Y, p + m, r + 1, d - r - 1) \
                    - twisted_hodge_number(X, p, r + 1, d - r) \
                    + twisted_hodge_number(X, p + m, r + 1, d - r) \
@@ -254,8 +258,8 @@ def twisted_hodge_number(X, j, p, q):
                    + twisted_hodge_number(X, -p, d - r, r) \
                    + twisted_hodge_number(Y, p, r, d - r - 1) \
                    - twisted_hodge_number(Y, -p - m, d - r - 1, r)
+        # apply Serre duality to reduce to [Satz 5(5.1), 3]
         elif q in range(d - r + 1, d + 1):
-            # apply Serre duality to reduce to [Satz 5(5.1), 3]
             return twisted_hodge_number(Y, -p, d - r, d - q)
 
     raise ValueError("Twisted Hodge numbers are not defined for this input.")
