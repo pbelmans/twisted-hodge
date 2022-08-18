@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/220016736.svg)](https://zenodo.org/badge/latestdoi/220016736)
+
 # Twisted Hodge numbers for complete intersections
 
 The file `twisted.sage` implements the computation of twisted Hodge numbers for complete intersections, due to Brückmann in the following papers
@@ -10,6 +12,8 @@ The file `twisted.sage` implements the computation of twisted Hodge numbers for 
 
 * [MR0447266] Brückmann, Peter: Zur Kohomologie von vollständigen Durchschnitten mit Koeffizienten in der Garbe der Keime der Differentialformen. II.
   Math. Nachr. 77 (1977), 307–318.
+  
+If you have used this code in any way, please consider citing it as explained on [Zenodo](https://doi.org/10.5281/zenodo.7006757). You can choose to cite a specific version, or the library in general.
 
 ## Getting started
 
