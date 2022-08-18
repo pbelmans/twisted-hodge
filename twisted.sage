@@ -311,14 +311,27 @@ class CompleteIntersection:
         sage: X == Y.intersect(3)
         True
 
+    We can moreover specify the characteristic::
+
+        sage: X = CompleteIntersection(4, [5, 3], 3)
+        sage: X.characteristic
+        3
+        sage: X = CompleteIntersection(4, [5, 3])
+        sage: X.characteristic
+        0
+
+
+
     """
-    def __init__(self, N, d):
+    def __init__(self, N, d, p=0):
         r"""
         INPUT:
 
         - ``N``: dimension of the ambient projective space `\mathbb{P}^N`
 
         - ``d``: degrees of hypersurfaces (or a single degree), can be empty
+
+        - ``p``: characteristic of the base field, default is 0
         """
         try:
             len(d)
@@ -328,9 +341,12 @@ class CompleteIntersection:
         assert N >= 0, "ambient projective space must be non-empty"
         assert len(d) <= N, "complete intersection must be non-empty"
         assert all([di > 0 for di in d]), "degrees must be positive"
+        assert p == 0 or p.is_prime(), "characteristic needs to be 0 or prime"
 
         self.__N = N
         self.__d = d
+
+        self.__p = p
 
     def __str__(self):
         """Pretty print the complete intersection."""
@@ -346,7 +362,8 @@ class CompleteIntersection:
 
     def __eq__(self, other):
         """
-        Compare complete intersections, they are equal if their dimensions and degree sequences agree.
+        Compare complete intersections, they are equal if their dimensions and degree sequences agree,
+        and they have the same characteristic.
         This takes into account linear sections.
 
         EXAMPLES::
@@ -358,10 +375,13 @@ class CompleteIntersection:
             True
             sage: CompleteIntersection(3, 4) == CompleteIntersection(3, 5)
             False
+            sage: CompleteIntersection(3, 4, 2) == CompleteIntersection(3, 4)
+            False
 
         """
         return self.__N - self.__d.count(1) == other.__N - other.__d.count(1) \
-                and sorted(filter(lambda di: di > 1, self.__d)) == sorted(filter(lambda di: di > 1, other.__d))
+                and sorted(filter(lambda di: di > 1, self.__d)) == sorted(filter(lambda di: di > 1, other.__d)) \
+                and self.__p == other.__p
 
     @property
     def degree(self):
@@ -389,6 +409,11 @@ class CompleteIntersection:
     def dimension(self):
         """Return the dimension of the complete intersection."""
         return self.ambient_dimension - self.codimension
+
+    @property
+    def characteristic(self):
+        """Return the characteristic of the base field."""
+        return self.__p
 
     def is_hypersurface(self, linear=False):
         """Check whether the complete intersection is a hypersurface.
