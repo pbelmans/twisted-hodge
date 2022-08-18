@@ -94,6 +94,12 @@ def twisted_hodge_number(X, j, p, q):
         sage: twisted_hodge_number((3, 2), 2, 1, 0)
         6
 
+    We will now implement the positive characteristic reality checks from [Satz 6, 3].
+
+        sage: [twisted_hodge_number(CompleteIntersection(15, [3, 4] + [2]*u, 2), r, r, 0) for u in range(1, 5) for r in range(0, 8, 2)] \
+                == [binomial(r / 2 + u - 1, u - 1) for u in range(1, 5) for r in range(0, 8, 2)]
+        True
+
     """
     def binom(n, k):
         """Wrap Sage's ``binomial`` such that we get 0 for negative ``n``."""
@@ -136,8 +142,7 @@ def twisted_hodge_number(X, j, p, q):
 
     # let's (try to) make it a complete intersection
     if not isinstance(X, CompleteIntersection):
-        (n, d) = X
-        X = CompleteIntersection(n, d)
+        X = CompleteIntersection(*X)
 
     # necessarily 0 in this case
     if p < 0 or q < 0 or p > X.dimension or q > X.dimension:
@@ -182,7 +187,7 @@ def twisted_hodge_number(X, j, p, q):
                 return 0
 
         # apply [Satz 2, 1]
-        elif r in range(1, X.dimension):
+        elif (X.characteristic == 0 or m % X.characteristic != 0) and r in range(1, X.dimension):
             if q == 0:
                 # apply equation (38) from [1]
                 return varphi(d, m, r, p)
@@ -199,6 +204,29 @@ def twisted_hodge_number(X, j, p, q):
                 return varphi(d, m, d - r, -p)
             else:
                 return 0
+        # apply [Satz 2, 1]
+        elif m % X.characteristic == 0 and r in range(1, X.dimension):
+            if q == 0:
+                # apply equation (43) from [1]
+                return varphi(d, m, r, p) if r % 2 == 0 else varphi(d, m, r, p) + kronecker_delta(p, r // 2 * m)
+            if q in range(1, d):
+                if q + r != d:
+                    # apply equation (44) from [1]
+                    if q in range(1, min(r, d - r - 1) + 1):
+                        return kronecker_delta(p, floor((r - q + 1) / 2) * m)
+                    elif q in range(max(r, d - r + 1), d):
+                        return kronecker_delta(-p, floor((q - r + 1) / 2) * m)
+                    else: return 0
+                else:
+                    # apply equation (40) from [1]
+                    return sigma(d, m, p - r*m) \
+                           + kronecker_delta(d, 2*r) * kronecker_delta(p, 0)
+            elif q == X.dimension:
+                # apply equation (41) from [1]
+                return varphi(d, m, d - r, -p)
+            else:
+                return 0
+
     # it's a complete intersection, so we are working in the setting of [2]
     else:
         # we switch to the notation of [2]
@@ -214,8 +242,13 @@ def twisted_hodge_number(X, j, p, q):
 
         # apply recursion from [Satz 5(5.1), 3]
         if q in range(1, d - r):
-            # last two terms are omitted because we are in characteristic 0
-            return twisted_hodge_number(X, p, r, q)
+            if X.characteristic == 0 or (m % X.characteristic) != 0:
+                # last two terms are omitted because we are in characteristic 0
+                return twisted_hodge_number(X, p, r, q)
+            else:
+                return twisted_hodge_number(X, p, r, q) \
+                        + twisted_hodge_number(X, p - m, r, q + 1) \
+                        + twisted_hodge_number(Y, p - m, r - 1, q + 1)
         # global sections
         elif q == 0:
             # apply first case of equation (10) from [2]
@@ -226,11 +259,18 @@ def twisted_hodge_number(X, j, p, q):
                 return alpha(n, mi, K + p)
             # apply recursion from [Satz 5(5.2), 3]
             elif r in range(1, d):
-                # last term is omitted because we are in characteristic 0
-                return twisted_hodge_number(X, p, r, 0) \
-                       - twisted_hodge_number(X, p - m, r, 0) \
-                       - twisted_hodge_number(Y, p - m, r - 1, 0) \
-                       + twisted_hodge_number(X, p - m, r, 1)
+                if X.characteristic == 0 or (m % X.characteristic) != 0:
+                    # last term is omitted because we are in characteristic 0
+                    return twisted_hodge_number(X, p, r, 0) \
+                           - twisted_hodge_number(X, p - m, r, 0) \
+                           - twisted_hodge_number(Y, p - m, r - 1, 0) \
+                           + twisted_hodge_number(X, p - m, r, 1)
+                else:
+                    return twisted_hodge_number(X, p, r, 0) \
+                           - twisted_hodge_number(X, p - m, r, 0) \
+                           - twisted_hodge_number(Y, p - m, r - 1, 0) \
+                           + twisted_hodge_number(X, p - m, r, 1) \
+                           + twisted_hodge_number(Y, p - m, r - 1, 1)
             else:
                 return 0
         # top degree cohomology
@@ -254,14 +294,21 @@ def twisted_hodge_number(X, j, p, q):
                    + twisted_hodge_number(Y, p + m, d, 0)
         # apply recursion from [Satz 5(5.4), 3]
         elif r in range(1, d) and q == d - r:
-            # last two terms are added because we are in characteristic 0
-            return twisted_hodge_number(Y, p + m, r + 1, d - r - 1) \
-                   - twisted_hodge_number(X, p, r + 1, d - r) \
-                   + twisted_hodge_number(X, p + m, r + 1, d - r) \
-                   - twisted_hodge_number(X, p + m, r + 1, d - r - 1) \
-                   + twisted_hodge_number(X, -p, d - r, r) \
-                   + twisted_hodge_number(Y, p, r, d - r - 1) \
-                   - twisted_hodge_number(Y, -p - m, d - r - 1, r)
+            if X.characteristic == 0 or (m % X.characteristic) != 0:
+                # last two terms are added because we are in characteristic 0
+                return twisted_hodge_number(Y, p + m, r + 1, d - r - 1) \
+                       - twisted_hodge_number(X, p, r + 1, d - r) \
+                       + twisted_hodge_number(X, p + m, r + 1, d - r) \
+                       - twisted_hodge_number(X, p + m, r + 1, d - r - 1) \
+                       + twisted_hodge_number(X, -p, d - r, r) \
+                       + twisted_hodge_number(Y, p, r, d - r - 1) \
+                       - twisted_hodge_number(Y, -p - m, d - r - 1, r)
+            else:
+                return twisted_hodge_number(Y, p + m, r + 1, d - r - 1) \
+                       - twisted_hodge_number(X, p, r + 1, d - r) \
+                       + twisted_hodge_number(X, p + m, r + 1, d - r) \
+                       - twisted_hodge_number(X, p + m, r + 1, d - r - 1) \
+                       + twisted_hodge_number(X, -p, d - r, r)
         # apply Serre duality to reduce to [Satz 5(5.1), 3]
         elif q in range(d - r + 1, d + 1):
             return twisted_hodge_number(Y, -p, d - r, d - q)
@@ -489,7 +536,7 @@ class CompleteIntersection:
         """
         assert not self.is_projective_space(), "Cannot unsect projective space"
 
-        return CompleteIntersection(self.ambient_dimension, self.degrees[:-1])
+        return CompleteIntersection(self.ambient_dimension, self.degrees[:-1], self.characteristic)
 
     def intersect(self, e):
         """Create further complete intersection with degree ``e`` hypersurface.
@@ -509,7 +556,7 @@ class CompleteIntersection:
             [2, 3]
         """
         assert self.dimension >= 1, "Need positive-dimensional original variety"
-        return CompleteIntersection(self.ambient_dimension, self.degrees + [e])
+        return CompleteIntersection(self.ambient_dimension, self.degrees + [e], self.characteristic)
 
 
 class TwistedHodgeDiamond:
