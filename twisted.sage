@@ -513,6 +513,12 @@ class TwistedHodgeDiamond:
         """
         return TwistedHodgeDiamond(self.__X, self.__j + i)
 
+    def euler(self):
+        d = self.variety.dimension
+        #return [sum([self[p, q] for (p, q) in Compositions(i, length=2, min_part=0, max_part=d)]) for i in range(2 * d + 1)]
+        return sum([(-1)^i * sum([self[p, q] for (p, q) in Compositions(i, length=2, min_part=0, max_part=d)]) for i in range(2 * d + 1)])
+
+
 
 class PolyvectorParallelogram(TwistedHodgeDiamond):
     r"""
@@ -589,3 +595,7 @@ class PolyvectorParallelogram(TwistedHodgeDiamond):
         (p, q) = key
         d = self.variety.dimension
         return TwistedHodgeDiamond.__getitem__(self, (d - p, q))
+
+    def euler(self):
+        # because we index the twisted Hodge diamond in a funny way for the parallelogram we have to add a sign
+        return (-1)**(self.variety.dimension) * TwistedHodgeDiamond.euler(self)
