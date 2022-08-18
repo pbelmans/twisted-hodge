@@ -55,6 +55,15 @@ For more information, see the docstrings.
 
 Also check out the documentation for the auxiliary class `CompleteIntersection`, and if you are into Hochschild cohomology the class `PolyvectorParallelogram`.
 
+
+## Instructions to myself
+
+To perform the unit tests:
+
+```
+sage -t twisted.sage
+```
+
 ## Authors
 
 * [**Pieter Belmans**](https://pbelmans.ncag.info)
