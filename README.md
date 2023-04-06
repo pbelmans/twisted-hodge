@@ -2,7 +2,7 @@
 
 # Twisted Hodge numbers for complete intersections
 
-The file `twisted.sage` implements the computation of twisted Hodge numbers for complete intersections, due to Brückmann in the following papers
+The file `twisted.py` implements the computation of twisted Hodge numbers for complete intersections, due to Brückmann in the following papers
 
 * [MR0399102] Brückmann, Peter: Zur Kohomologie von projektiven Hyperflächen.
   Beiträge zur Algebra und Geometrie, 2. 4 (1973), 87–101 (1974).
@@ -17,7 +17,7 @@ If you have used this code in any way, please consider citing it as explained on
 
 ## Getting started
 
-Make sure that Sage knows about `twisted.sage`, probably by doing `load("twisted.sage")`. There is ample documentation in the file, which can be acessed via
+Make sure that Sage knows about `twisted.py`, probably by doing `load("twisted.py")`. There is ample documentation in the file, which can be acessed via
 
 ```
 twisted_hodge_number?
@@ -65,7 +65,7 @@ Also check out the documentation for the auxiliary class `CompleteIntersection`,
 To perform the unit tests:
 
 ```
-sage -t twisted.sage
+sage -t twisted.py
 ```
 
 ## Authors
