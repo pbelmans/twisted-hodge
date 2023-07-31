@@ -17,7 +17,17 @@ If you have used this code in any way, please consider citing it as explained on
 
 ## Getting started
 
-Make sure that Sage knows about `twisted.py`, probably by doing `load("twisted.py")`. There is ample documentation in the file, which can be acessed via
+It suffices to put ``twisted/twisted.py`` in your directory and load it using ``load("twisted.py")`` in Sage to get started.
+
+Alternatively you can install it as follows:
+
+``sage --pip install git+https://github.com/pbelmans/twisted-hodge.git``
+
+and then you can use
+
+``from twisted import *``
+
+to use it.
 
 ```
 twisted_hodge_number?
@@ -65,7 +75,7 @@ Also check out the documentation for the auxiliary class `CompleteIntersection`,
 To perform the unit tests:
 
 ```
-sage -t twisted.py
+sage -t twisted/twisted.py
 ```
 
 ## Authors

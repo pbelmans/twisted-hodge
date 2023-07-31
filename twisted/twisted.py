@@ -26,7 +26,7 @@ EXAMPLES:
 
 To compute the usual Hodge number `\mathrm{h}^{1,1}` of a quartic surface::
 
-    sage: load("twisted.py")
+    sage: from twisted import *
     sage: twisted_hodge_number((3, 4), 0, 1, 1)
     20
 
@@ -74,7 +74,7 @@ def twisted_hodge_number(X, j, p, q):
     We can compute the middle Hodge number of a complete intersection K3
     surface in the three cases as follows::
 
-        sage: load("twisted.py")
+        sage: from twisted import *
         sage: K3 = CompleteIntersection(3, 4)
         sage: twisted_hodge_number(K3, 0, 1, 1)
         20
@@ -333,7 +333,7 @@ class CompleteIntersection:
 
     We can construct a complete intersection with no hypersurfaces (so projective space)::
 
-        sage: load("twisted.py")
+        sage: from twisted import *
         sage: X = CompleteIntersection(3, [])
         sage: X.is_projective_space()
         True
@@ -415,7 +415,7 @@ class CompleteIntersection:
 
         EXAMPLES::
 
-            sage: load("twisted.py")
+            sage: from twisted import *
             sage: CompleteIntersection(3, 4) == CompleteIntersection(3, [4])
             True
             sage: CompleteIntersection(3, 4) == CompleteIntersection(4, [4, 1])
@@ -468,7 +468,7 @@ class CompleteIntersection:
 
         EXAMPLES::
 
-            sage: load("twisted.py")
+            sage: from twisted import *
             sage: CompleteIntersection(5, [2, 2]).is_hypersurface()
             False
             sage: CompleteIntersection(5, [2, 1]).is_hypersurface()
@@ -488,7 +488,7 @@ class CompleteIntersection:
 
         EXAMPLES::
 
-            sage: load("twisted.py")
+            sage: from twisted import *
             sage: CompleteIntersection(5, []).is_projective_space()
             True
             sage: CompleteIntersection(5, [1]).is_projective_space()
@@ -517,7 +517,7 @@ class CompleteIntersection:
 
         Intersection of quadric and cubic becomes quadric::
 
-            sage: load("twisted.py")
+            sage: from twisted import *
             sage: X = CompleteIntersection(4, [2, 3])
             sage: Y = X.unsect()
             sage: Y.degree
@@ -544,7 +544,7 @@ class CompleteIntersection:
 
         Cut down a quadric surface by a cubic to get curve
 
-            sage: load("twisted.py")
+            sage: from twisted import *
             sage: X = CompleteIntersection(3, 2)
             sage: Y = X.intersect(3)
             sage: Y.degrees
@@ -566,7 +566,7 @@ class TwistedHodgeDiamond:
 
     The (untwisted) Hodge diamond of a (quartic) K3 surface::
 
-        sage: load("twisted.py")
+        sage: from twisted import *
         sage: print(TwistedHodgeDiamond((3, 4)))
                   1
               0        0
@@ -676,7 +676,7 @@ class PolyvectorParallelogram(TwistedHodgeDiamond):
 
     The polyvector parallelogram of a cubic surface starts is::
 
-        sage: load("twisted.py")
+        sage: from twisted import *
         sage: print(PolyvectorParallelogram((3, 3)))
           1
           0   0
@@ -750,7 +750,7 @@ class PolyvectorParallelogram(TwistedHodgeDiamond):
         The following checks the equality of Euler characteristics of Hochschild cohomology
         and homology up to a sign determined by the dimension. ::
 
-            sage: load("twisted.py")
+            sage: from twisted import *
             sage: X = CompleteIntersection(9, [3, 3])
             sage: TwistedHodgeDiamond(X).euler() == -1 * PolyvectorParallelogram(X).euler()
             True
