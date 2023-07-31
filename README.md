@@ -1,4 +1,7 @@
 [![DOI](https://zenodo.org/badge/220016736.svg)](https://zenodo.org/badge/latestdoi/220016736)
+[![license](https://badgen.net/github/license/pbelmans/twisted-hodge)](https://github.com/pbelmans/twisted-hodge/blob/master/LICENSE)
+
+[![tests](https://github.com/pbelmans/twisted-hodge/actions/workflows/tests.yml/badge.svg)](https://github.com/pbelmans/twisted-hodge/actions)
 
 # Twisted Hodge numbers for complete intersections
 
