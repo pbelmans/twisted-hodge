@@ -1,0 +1,21 @@
+name: Unit tests
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    container:
+      image: sagemath/sagemath:latest
+      options: --user root
+    steps:
+      - name: Checkout Twisted Hodge numbers calculator
+        uses: actions/checkout@v3
+      - name: Install the Twisted Hodge numbers calculator
+        run: sage --pip install .
+      - name: Run the tests
+        run: sage -t twisted/twisted.py
+
