@@ -73,6 +73,26 @@ For more information, see the docstrings.
 Also check out the documentation for the auxiliary class `CompleteIntersection`, and if you are into Hochschild cohomology the class `PolyvectorParallelogram`.
 
 
+## How to cite
+
+If you have used this code in any way, please consider citing it as explained on [Zenodo](https://zenodo.org/records/7006757)). You can choose to cite a specific version, or always the latest version.
+
+The following BibTeX entry is a good starting point:
+
+```bibtex
+@software{twisted-hodge,
+  author = {Belmans, Pieter and Glas, Piet},
+  title = {Twisted Hodge diamonds of complete intersections},
+  url = {https://github.com/pbelmans/twisted-hodge},
+  doi = {10.5281/zenodo.7006756},
+}
+```
+
+which leads to something like
+
+> Pieter Belmans and Piet Glas. _Twisted Hodge diamonds of complete intersections_. doi:10.5281/zenodo.7006756. url: ht<span>tps://github.com/pbelmans/twisted-hodge.
+
+
 ## Instructions to myself
 
 To perform the unit tests:
